@@ -1,2 +1,2 @@
-# the-beauty-of-scala
+# The beauty of Scala
 The collection of beautiful Scala problems
