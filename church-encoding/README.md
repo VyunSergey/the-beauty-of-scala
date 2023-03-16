@@ -1,6 +1,6 @@
 # Church encoding
 
-Welcome to Alphametics problem.
+Welcome to Church encoding.
 
 ## Instructions
 
