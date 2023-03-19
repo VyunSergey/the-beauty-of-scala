@@ -9,3 +9,7 @@
 *.iws
 *.iml
 *.ipr
+
+### Scala/Java ###
+*.class
+*.log
