@@ -1,15 +1,13 @@
-import scala.annotation.tailrec
-
 object CollatzConjecture {
 
-  def steps(n: Int): Option[Int] = {
-    @tailrec
-    def collatz(n: BigInt, res: Int = 0): Int = {
-      println((n, res))
-      if (n == 1) res
-      else if (n % 2 == 0) collatz(n / 2, res + 1)
-      else collatz(3 * n + 1, res + 1)
-    }
-    if (n > 0) Some(collatz(n)) else None
-  }
+  /**
+   * Function to find the number of steps required to reach 1 for input number `n` in The Collatz conjecture
+   * that can be summarized as follows:
+   * (*) If `n` is even `->` divide `n` by 2 to get `n / 2`
+   * (*) If `n` is odd `->` multiply `n` by 3 and add 1 to get `3n + 1`
+   * (*) Repeat the process indefinitely until `1` reached
+   * @param n  input number
+   * @return  the number of steps required to reach 1
+   * */
+  def steps(n: Int): Option[Int] = ???
 }
