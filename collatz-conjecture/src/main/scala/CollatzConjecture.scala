@@ -1,4 +1,5 @@
 object CollatzConjecture {
+  import scala.annotation.tailrec
 
   /**
    * Function to find the number of steps required to reach 1 for input number `n` in The Collatz conjecture
@@ -9,5 +10,17 @@ object CollatzConjecture {
    * @param n  input number
    * @return  the number of steps required to reach 1
    * */
-  def steps(n: Int): Option[Int] = ???
+  def steps(n: Int): Option[Int] = {
+    val zero: BigInt = BigInt(0)
+    val one: BigInt = BigInt(1)
+
+    @tailrec
+    def collatz(n: BigInt, i: Int = 0): Int = (n, n % 2) match {
+      case (`one`, _)  => i
+      case (_, `zero`) => collatz(n / 2, i + 1)
+      case (_, `one`)  => collatz(3 * n + 1, i + 1)
+    }
+
+    Option.when(n > 0)(collatz(n))
+  }
 }
