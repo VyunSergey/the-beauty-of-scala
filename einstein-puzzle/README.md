@@ -4,7 +4,7 @@ Welcome to Einstein's Puzzle.
 
 ## Instructions
 
-[Einstein's Puzzle](https://en.wikipedia.org/wiki/Zebra_Puzzle)  or Einstein's Riddle or Zebra puzzle can be summarized as follows:
+[Einstein's Puzzle](https://en.wikipedia.org/wiki/Zebra_Puzzle) or Einstein's Riddle or Zebra puzzle can be summarized as follows:
 
 The following version of the puzzle appeared in Life International in 1962:
 1) There are five houses
