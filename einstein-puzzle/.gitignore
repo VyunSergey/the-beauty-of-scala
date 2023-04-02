@@ -1,0 +1,15 @@
+### sbt ###
+/target/
+/project/target/
+/project/project/target/
+
+### IntelliJ IDEA ###
+/.bsp/
+/.idea/
+*.iws
+*.iml
+*.ipr
+
+### Scala/Java ###
+*.class
+*.log
