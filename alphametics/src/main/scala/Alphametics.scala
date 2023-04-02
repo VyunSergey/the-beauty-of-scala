@@ -12,7 +12,9 @@ object Alphametics {
    * @return  some map with identification of the value of each letter if solution exists otherwise none
    */
   def solve(eq: String): Option[Map[Char, Int]] = eq.split(" == ").toList match {
-    case left :: right :: Nil => solveEq(left.split(" \\+ "), right)
+    case left :: right :: Nil
+      if left.split(" \\+ ").forall(_.forall(alphabet.contains))
+        && right.forall(alphabet.contains) => solveEq(left.split(" \\+ "), right)
     case _ => None
   }
 
@@ -31,37 +33,34 @@ object Alphametics {
     // {I, B}
     val capChars: Set[Char] = (left.flatMap(_.headOption) ++ Array(right).flatMap(_.headOption)).toSet
     // (I -> 1-9, B -> 1-9, L -> 0-9)
-    val cond: Map[Char, List[Int]] =
-      chars.map(c => c -> digits.toList).toMap ++
-        capChars.map(c => c -> (digits - 0).toList)
+    val cond: Map[Char, Set[Int]] = chars.map(c => c -> digits).toMap ++ capChars.map(c => c -> (digits - 0))
 
-    solveEqs(eqs zipAll (target, Nil, '@'), cond, 0, Map.empty[Char, Int])
+    solveEqs(eqs zipAll (target.map(Some.apply), Nil, None), cond, 0, Map.empty[Char, Int])
   }
 
-  def solveEqs(eqs: List[(List[(Char, Int)], Char)],
-               cond: Map[Char, List[Int]],
+  def solveEqs(eqs: List[(List[(Char, Int)], Option[Char])],
+               cond: Map[Char, Set[Int]],
                accum: Int,
                known: Map[Char, Int]): Option[Map[Char, Int]] = eqs match {
-    case Nil if accum == 0 => Some(known)
-    case (Nil, rc) :: tail if known.contains(rc) =>
-      for {
-        _   <- Option.when(known(rc) == accum % 10)(())
-        res <- solveEqs(tail, cond, accum / 10, known)
-      } yield res
-    case (Nil, rc) :: tail if !known.contains(rc) =>
-      for {
-        _   <- Option.when(!known.exists(_._2 == accum % 10))(())
-        res <- solveEqs(tail, cond, accum / 10, known ++ Map(rc -> accum % 10))
-      } yield res
-    case ((c, n) :: rest, rc) :: tail if known.contains(c) =>
-      solveEqs((rest, rc) :: tail, cond, accum + known(c) * n, known)
-    case ((c, n) :: rest, rc) :: tail if !known.contains(c) =>
-      Console.out.println(s"char=$c num=$n eq=${(c, n) :: rest} target=$rc")
+    case Nil => Some(known)
+    case (Nil, Some(rc)) :: tail if known.contains(rc) && known(rc) == accum % 10 =>
+      solveEqs(tail, cond, accum / 10, known)
+    case (Nil, Some(rc)) :: tail if !known.contains(rc) &&
+      (cond(rc) diff known.values.toSet).contains(accum % 10) =>
+      solveEqs(tail, cond, accum / 10, known ++ Map(rc -> accum % 10))
+    case ((c, n) :: rest, Some(rc)) :: tail if known.contains(c) =>
+      solveEqs((rest, Some(rc)) :: tail, cond, accum + n * known(c), known)
+    case ((c, n) :: rest, Some(rc)) :: tail if !known.contains(c) =>
+      Console.out.println(s"$n*$c eq=[($accum+${((c, n) :: rest).map{
+        case (c, n) if known.contains(c) => s"${n*known(c)}"
+        case (c, n) => s"$n*$c"
+      }.mkString("+")})%10==${known.get(rc).map(i => ('0' + i).toChar).getOrElse(rc)}] rest=${tail.length} known=$known")
       Console.flush()
 
-      cond(c).foldLeft(Option.empty[Map[Char, Int]]) { case (res, d) =>
-        res orElse solveEqs((rest, rc) :: tail, cond, accum + d * n, known ++ Map(c -> d))
-      }
+      (cond(c) diff known.values.toSet)
+        .foldLeft(Option.empty[Map[Char, Int]]) { case (res, d) =>
+          res orElse solveEqs((rest, Some(rc)) :: tail, cond, accum + n * d, known ++ Map(c -> d))
+        }
     case _ => None
   }
 
@@ -70,7 +69,7 @@ object Alphametics {
     // [I, BB] -> len(BB) = 2
     val maxCharsLen = left.map(_.length).maxOption.getOrElse(0)
     for {
-      i <- (0 to maxCharsLen).toList
+      i <- List.range(0, maxCharsLen)
     } yield {
       (for {
         j <- left.indices.toList
@@ -79,5 +78,4 @@ object Alphametics {
       }) collect { case Some(c) => c }
     }
   }
-
 }
