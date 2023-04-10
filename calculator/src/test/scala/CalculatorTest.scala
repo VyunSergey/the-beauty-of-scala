@@ -44,6 +44,6 @@ class CalculatorTest extends AnyFunSuite with Matchers {
   }
 
   test("test 10") {
-    Calculator.evaluate("2+3-(8*(2+3-3)*4-(6+7)*4)-(4+1+2-3+2)*4+((-3*5-6+9)*8-(9+7))-8-6+(6*(0-6+7-5))") should be(Some(-181))
+    Calculator.evaluate("2+3-(8*(2+3-3)*4-(6+7)*4)-(4+1+2-3+2)*4+((0-3*5-6+9)*8-(9+7))-8-6+(6*(0-6+7-5))") should be(Some(-181))
   }
 }
